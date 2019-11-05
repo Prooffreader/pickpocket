@@ -1,7 +1,7 @@
 # pickpocket [in development, pre-alpha]
 Python app to pick an item from your Pocket account and e-mail it to you to force you to read it
 
-![](https://www.dtdata.io/shared/pocket.svg | width=75)
+<img src="https://www.dtdata.io/shared/pocket.svg" alt="Pocket logo" width="75">
 
 Pocket (formerly Read It Later) and similar bookmarking apps are great, but in my and many users' experience they tend to become a dumping ground for stuff that you rarely if ever return to, maybe sometimes taking a few hours to curate the backlog in a herculean effort.
 
