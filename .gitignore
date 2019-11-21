@@ -4,6 +4,8 @@
 .env
 .archive/
 .sample-data.json
+extdocs/
+oldapp/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
