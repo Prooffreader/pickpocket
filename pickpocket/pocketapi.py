@@ -3,43 +3,34 @@
 
 import json
 import os
-from pathlib import Path
 from urllib.parse import quote
 
-from dotenv import load_dotenv
 import requests
 
-ENV_PATH = Path('.') / '..' / '.env'
-load_dotenv(dotenv_path=ENV_PATH)
 
-PARAMS = {"consumer_key": os.getenv('POCKET_CONSUMER_KEY'),
-          "access_token": os.getenv('POCKET_ACCESS_TOKEN')}
-
-def read_from_pocket():
+def read_from_pocket(params):
     """Reads all bookmarks from Pocket (or local json temporarily during development)
     and returns dict from JSON"""
-    use_dummy = eval(os.getenv('USE_DUMMY_DATA')) # temp so will work w/o internet
-    params = PARAMS
-    print(repr(use_dummy))
-    params['detailType'] = 'complete'
-    if not use_dummy or not os.path.isfile('.sample-data.json'):
-        print('downloading from pocket')
-        json_result = json.loads(requests.get("https://getpocket.com/v3/get", params=params).text)
-        with open('.sample-data.json', 'w') as f:
-            f.write(json.dumps(json_result))
-        return json_result
-    else:
-        print('using saved data')
-        with open('../.sample-data.json', 'r') as f:
-            return json.load(f)
+    print('downloading from pocket')
+    result = requests.post("https://getpocket.com/v3/get", params=params)
+    if not result.status_code == 200:
+        raise IOError(f'Status code is {result.status_code} instead of 200')
+    result = json.loads(result.text)
+    assert result['status'] == '1'
+    assert result['complete'] == '1'
+    return result['list']
 
-def favorite_an_entry(item_uid):
+def add_entry(url, params):
+    pass
+
+
+def favorite_entry(item_id, params):
     if not isinstance(item_id, str):  # TODO: is this necessary?
         item_id = str(item_id)
     blob = [{"action":"favorite","item_id":item_id}]
     txt = quote(json.dumps(blob))
     url = ('https://getpocket.com/v3/send?actions='
-           f'{txt}&access_token={PARAMS["access_token"]}&consumer_key={PARAMS["consumer_key"]}')
+           f'{txt}&access_token={params["access_token"]}&consumer_key={params["consumer_key"]}')
     r = requests.get(url)
     # TODO: handle this
     raise NotImplementedError
